@@ -237,27 +237,53 @@ function buildSelectionChart() {
   const canvas = document.getElementById('selectionChart');
   if (!canvas) return;
 
+  const groups = [
+    { label: 'Expression', from: 0, to: 2, fill: 'rgba(29, 158, 117, 0.05)' },
+    { label: 'Binding',    from: 3, to: 6, fill: 'rgba(29, 158, 117, 0.11)' },
+  ];
+
+  const groupBounds = (chart, g) => {
+    const x = chart.scales.x;
+    const halfStep = x.width / (SELECTION_ASSAYS.length * 2);
+    return {
+      x0: x.getPixelForValue(g.from) - halfStep,
+      x1: x.getPixelForValue(g.to)   + halfStep,
+    };
+  };
+
   const groupBandPlugin = {
     id: 'groupBand',
-    afterDraw(chart) {
-      const { ctx, scales: { x, y } } = chart;
-      const bottom = y.bottom;
-      const bandH = 5;
-      const groups = [
-        { label: 'Expression', from: 0, to: 2 },
-        { label: 'Binding',    from: 3, to: 6 },
-      ];
+    // Shaded backdrop behind the bars, so it's clear which bars belong to which group.
+    beforeDatasetsDraw(chart) {
+      const { ctx, scales: { y } } = chart;
       ctx.save();
       groups.forEach(g => {
-        const x0 = x.getPixelForValue(g.from) - x.width / (SELECTION_ASSAYS.length * 2);
-        const x1 = x.getPixelForValue(g.to)   + x.width / (SELECTION_ASSAYS.length * 2);
-        ctx.fillStyle = 'rgba(0,0,0,0.04)';
-        ctx.fillRect(x0, bottom + 1, x1 - x0, bandH);
+        const { x0, x1 } = groupBounds(chart, g);
+        ctx.fillStyle = g.fill;
+        ctx.fillRect(x0, y.top, x1 - x0, y.bottom - y.top);
+      });
+      ctx.restore();
+    },
+    // Group label + thin underline above the chart area.
+    afterDraw(chart) {
+      const { ctx, scales: { y } } = chart;
+      const top = y.top;
+      const labelGap = 4;
+      ctx.save();
+      groups.forEach(g => {
+        const { x0, x1 } = groupBounds(chart, g);
+        ctx.strokeStyle = 'rgba(29, 158, 117, 0.45)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x0, top - 1);
+        ctx.lineTo(x1, top - 1);
+        ctx.stroke();
 
-        ctx.fillStyle = '#9ca3af';
-        ctx.font = '9px system-ui, sans-serif';
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '10px system-ui, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(g.label, (x0 + x1) / 2, bottom + bandH + 9);
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(g.label, (x0 + x1) / 2, top - labelGap);
       });
       ctx.restore();
     }
@@ -287,7 +313,7 @@ function buildSelectionChart() {
     },
     options: {
       responsive: true,
-      layout: { padding: { bottom: 20 } },
+      layout: { padding: { top: 22 } },
       scales: {
         x: { grid: { display: false }, ticks: { font: { size: 11 } } },
         y: {
