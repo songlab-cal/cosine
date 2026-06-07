@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CoSiNE: Conditionally Site-Independent Neural Evolution of Antibody Sequences</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- KaTeX for equation rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}, {left: '\\[', right: '\\]', display: true}], throwOnError: false});"></script>
+</head>
+<body>
+<main>
+
+  <!-- ── Header ──────────────────────────────────────── -->
+  <header>
+    <h1>Conditionally Site-Independent Neural Evolution of Antibody Sequences</h1>
+
+    <div class="author-list">
+      <span><a href="#">Stephen Zhewen Lu</a><sup>*</sup></span>
+      <span><a href="#">Aakarsh Vermani</a><sup>*</sup></span>
+      <span><a href="#">Kohei Sanno</a></span>
+      <span><a href="#">Jiarui Lu</a></span>
+      <span><a href="#">Frederick A. Matsen IV</a></span>
+      <span><a href="#">Milind Jagota</a></span>
+      <span><a href="#">Yun S. Song</a></span>
+    </div>
+
+    <p class="equal-contrib"><sup>*</sup> Equal contribution</p>
+
+    <p class="affiliation">
+      UC Berkeley &middot; Mila &middot; Universit&eacute; de Montr&eacute;al &middot; Fred Hutch &middot; U Washington &middot; HHMI &middot; Columbia
+      &nbsp;&nbsp;|&nbsp;&nbsp; <strong>ICML 2026</strong>
+    </p>
+
+    <div class="link-pills">
+      <a class="pill" href="https://arxiv.org/abs/2602.18982" target="_blank" rel="noopener">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        arXiv
+      </a>
+      <a class="pill" href="https://github.com/thematrixmaster/cosine" target="_blank" rel="noopener">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
+        Code
+      </a>
+    </div>
+  </header>
+
+  <!-- ── One-line description ────────────────────────── -->
+  <p class="description">
+    CoSiNE explicitly models the dynamics of affinity maturation, the evolutionary process that most antibody sequence models leave implicit.
+  </p>
+
+  <!-- ── Teaser: antibody mutation timeline ──────────── -->
+  <div class="section teaser-wrap" id="teaser">
+    <figure>
+      <video src="static/figures/antibody_mutation_timeline.mp4" autoplay loop muted playsinline></video>
+      <figcaption>
+        A single antibody lineage accumulating somatic mutations over time. CoSiNE learns to model this process directly, rather than only the distribution of mature sequences.
+      </figcaption>
+    </figure>
+  </div>
+
+  <!-- ── Why CoSiNE? ─────────────────────────────────── -->
+  <div class="section" id="why">
+    <h2>Why CoSiNE?</h2>
+    <ul class="why-list">
+      <li>
+        <strong>Dynamics, not just distribution.</strong> Most antibody language models
+        treat mature sequences as i.i.d. samples from a stationary distribution. CoSiNE
+        models the time-dependent <em>process</em> of affinity maturation with a
+        continuous-time Markov chain whose rate matrices are parameterized by a deep
+        neural network.
+      </li>
+      <li>
+        <strong>Decoupling mutation from selection.</strong> A raw likelihood mixes up two
+        things: how likely a mutation is to happen under somatic hypermutation, and how
+        beneficial it is. We separate the two by taking a log-ratio against a frozen SHM
+        model, leaving only the selection signal.
+      </li>
+      <li>
+        <strong>Steerable generation.</strong> Guided Gillespie sampling steers CoSiNE
+        toward user-specified antigens at inference time, running roughly 500&times;
+        faster than exact oracle guidance and requiring no retraining of the base model.
+      </li>
+    </ul>
+  </div>
+
+  <!-- ── Abstract ────────────────────────────────────── -->
+  <div class="section" id="abstract">
+    <h2>Abstract</h2>
+    <p class="abstract-body">
+      Common deep learning approaches for antibody engineering focus on modeling the marginal distribution of sequences. By treating sequences as independent samples, however, these methods overlook affinity maturation as a rich and largely untapped source of information about the evolutionary process by which antibodies explore the underlying fitness landscape. In contrast, classical phylogenetic models explicitly represent evolutionary dynamics but lack the expressivity to capture complex epistatic interactions. We bridge this gap with CoSiNE, a continuous-time Markov chain parameterized by a deep neural network. Mathematically, we prove that CoSiNE provides a first-order approximation to the intractable sequential point mutation process, capturing epistatic effects with an error bound that is quadratic in branch length. Empirically, CoSiNE outperforms state-of-the-art language models in zero-shot variant effect prediction by explicitly disentangling selection from context-dependent somatic hypermutation. Finally, we introduce Guided Gillespie, a classifier-guided sampling scheme that steers CoSiNE at inference time, enabling efficient optimization of antibody binding affinity toward specific antigens.
+    </p>
+  </div>
+
+  <!-- ── Method ──────────────────────────────────────── -->
+  <div class="section" id="method">
+    <h2>Method</h2>
+
+    <figure>
+      <img src="static/figures/architecture.png" alt="CoSiNE pipeline: sequence input goes through a PLM backbone that outputs per-site rate matrices Q(x); matrix exponentials evolve each site over time t; the product over sites gives the transition probability p(y|x,t)." />
+      <figcaption>
+        <strong>Overview.</strong> A neural network maps an antibody sequence $x$ to per-site rate matrices conditioned on the full sequence. Matrix exponentials evolve each site over time $t$, and their product gives the transition probability $p(y \mid x, t)$.
+      </figcaption>
+    </figure>
+
+    <p>
+      Protein evolution is naturally described by a continuous-time Markov chain (CTMC)
+      over the $|\mathcal{A}|^L$ space of length-$L$ sequences. The full sequence-level
+      rate matrix is intractable: a single matrix exponential costs $O(|\mathcal{A}|^{3L})$.
+      Classical phylogenetic models work around this by assuming sites evolve
+      independently, which gives a tractable likelihood but throws away epistasis.
+    </p>
+    <p>
+      CoSiNE keeps the factorized likelihood but conditions each site's rate matrix on the
+      <em>entire</em> sequence through a neural network $Q_\theta$:
+    </p>
+    <p class="equation">
+      $$ p_\theta(y \mid x, t) \;=\; \prod_{\ell=1}^{L} \exp\!\bigl(t\, Q_\theta(x)_\ell\bigr)_{x_\ell,\, y_\ell}. $$
+    </p>
+    <p>
+      Each site's rate matrix sees the whole sequence (so the model captures epistasis),
+      while transitions still factorize across sites (so the likelihood is cheap). In the
+      paper we show that this construction is a first-order approximation of the true
+      sequential point-mutation process, with an $\ell_1$ error bound of $(\lambda t)^2$
+      that vanishes for short branches. For long branches we use a Gillespie procedure
+      that, under the rate-matching assumption, provably samples from the exact process.
+    </p>
+  </div>
+
+  <!-- ── Selection score ─────────────────────────────── -->
+  <div class="section" id="selection">
+    <h2>The selection score</h2>
+
+    <p>
+      A raw likelihood conflates two things: how likely a mutation is to occur under
+      neutral somatic hypermutation, and how strongly that mutation is favored by
+      selection. To isolate the selection signal, we take a log-ratio between CoSiNE and a
+      frozen pre-trained SHM model $q$ (Thrifty, Sung et al. 2025):
+    </p>
+    <p class="equation">
+      $$ \mathrm{Score}(x \to y) \;=\; \log p_\theta(y \mid x, t) \;-\; \log q(y \mid x, t) \;\approx\; \log P_{\text{fix}}(x \to y) \,+\, C. $$
+    </p>
+    <p>
+      Under the Halpern&ndash;Bruno decomposition $Q_{xy} = k \mu_{xy} P_{\text{fix}}(x \to y)$,
+      the mutational term $\mu_{xy}$ cancels and what remains is a calibration-free proxy
+      for fitness that we can compute zero-shot.
+    </p>
+
+    <h3 class="subsection-h">The correction lifts every assay</h3>
+    <p class="lead-in">
+      <strong>Spearman $\rho$ improves on all seven assays</strong> when we replace the
+      raw log-likelihood with the SHM-corrected selection score.
+    </p>
+
+    <div class="chart-legend">
+      <span>
+        <span class="legend-swatch" style="background:#C9D9D2; border:1px solid #9FBDB0;"></span>
+        Log-likelihood
+      </span>
+      <span>
+        <span class="legend-swatch" style="background:#1D9E75;"></span>
+        Selection score
+      </span>
+    </div>
+    <div class="chart-container">
+      <canvas id="selectionChart" height="260"></canvas>
+    </div>
+    <p class="figcap-stand">
+      The correction helps on every assay, with the largest gains where mutational bias is
+      strongest. Values from Figure 4 of the paper.
+    </p>
+
+    <h3 class="subsection-h">Zero-shot variant effect prediction</h3>
+    <p class="lead-in">
+      <strong>Across nine assays, CoSiNE matches or beats the best baseline on eight.</strong>
+      Spearman $\rho$ between model score and measured fitness, computed without ever
+      seeing experimental labels during training. Best per assay in <strong>bold</strong>,
+      second-best <u>underlined</u> (computed from the data, not hard-coded).
+    </p>
+
+    <div class="table-scroll">
+      <table id="vepTable"></table>
+    </div>
+    <p class="figcap-stand">
+      The MAGMA-seq (Petersen) assays use a different experimental protocol and are held
+      out from the main benchmark, but the same eight baselines were run on all nine
+      columns. CoSiNE evaluated at $t = 0.2$. Shaneh.120 is an exact tie with DASM.
+    </p>
+  </div>
+
+  <!-- ── Guided Gillespie ────────────────────────────── -->
+  <div class="section" id="guided">
+    <h2>Guided Gillespie</h2>
+
+    <p>
+      To design antibodies that bind a chosen antigen $z$, we want to draw from the
+      conditional density $p(y \mid x, t, z)$. Nisonoff et al. (2025) showed that in the
+      $t \to 0$ limit this corresponds to tilting the rate matrix by the likelihood ratio:
+    </p>
+    <p class="equation">
+      $$ \bigl(Q^{(\gamma)}_z\bigr)_{x,y} \;=\; \left(\frac{p(z \mid y)}{p(z \mid x)}\right)^{\!\gamma}\! Q_{x,y}, $$
+    </p>
+    <p>
+      where $\gamma > 0$ controls guidance strength. We approximate $p(z \mid y)$ with an
+      external sequence-to-affinity predictor and replace the per-neighbor predictor calls
+      with a single gradient step (a first-order Taylor expansion), which gives a roughly
+      500&times; speedup over exact oracle guidance with no measurable loss in fitness
+      improvement. Because the predictor only sees clean sequences, any off-the-shelf
+      sequence-to-property model can be plugged in without retraining.
+    </p>
+
+    <h3 class="subsection-h">Steering evolution toward a target</h3>
+    <p class="lead-in">
+      <strong>Guided sampling shifts the affinity distribution toward known binders</strong>
+      while keeping humanness (OASis) and structure (AbodyBuilder3 pLDDT) inside the
+      natural antibody distribution.
+    </p>
+
+    <div class="figures-row">
+      <figure>
+        <img src="static/figures/guidance_affinity.png" alt="Distribution of predicted SARS-CoV-1 binding affinity for unguided and guided CoSiNE samples at increasing guidance strength gamma, compared against known CoV-AbDab binders." />
+        <figcaption>
+          <strong>Binding affinity.</strong> Increasing $\gamma$ steadily shifts predicted
+          affinity toward real CoV-AbDab binders (red). At $\gamma = 5$ the guided samples
+          overlap real binders without exploiting oracle uncertainty.
+        </figcaption>
+      </figure>
+      <figure>
+        <img src="static/figures/guidance_quality.png" alt="OASis humanness versus AbodyBuilder3 pLDDT scatter for unguided samples, guided samples at gamma=5, and known binders." />
+        <figcaption>
+          <strong>Humanness &amp; structure preserved.</strong> Guided samples at $\gamma = 5$
+          stay close to both unguided samples and real binders on humanness and predicted
+          structure quality.
+        </figcaption>
+      </figure>
+    </div>
+
+    <h3 class="subsection-h">Constrained CDR optimization</h3>
+    <p class="lead-in">
+      <strong>Best mean and max affinity gain under a strict budget.</strong> Each method
+      refines a SARS-CoV-1 binder with at most five mutations in CDR positions and at most
+      five oracle calls per generated variant. <em>Greedy*</em> is exempt from the oracle
+      budget (2,756 calls per variant) and is shown only as a reference upper bound.
+    </p>
+
+    <div class="table-scroll">
+      <table id="cdrTable"></table>
+    </div>
+    <p class="figcap-stand">
+      Among budget-constrained methods, CoSiNE attains the highest mean and maximum
+      $\Delta$Bind while preserving humanness comparable to the antibody-specialized
+      AbLang-PoE. Best per column in <strong>bold</strong>, second-best <u>underlined</u>.
+      Greedy* is excluded from the ranking. Arrows indicate direction of better.
+    </p>
+  </div>
+
+  <!-- ── Limitations ─────────────────────────────────── -->
+  <div class="section" id="limitations">
+    <h2>Limitations</h2>
+    <p>
+      <strong>First-order approximation.</strong> CoSiNE's factorized likelihood is a
+      first-order approximation of the true sequential point-mutation process, with error
+      that grows quadratically in branch length. This is acceptable for affinity
+      maturation, where branches are short, and Gillespie sampling reduces the error
+      further, but it does not eliminate it.
+    </p>
+    <p>
+      <strong>No indels.</strong> The current framework models substitutions only, which
+      restricts CoSiNE to fixed-length sequences or multiple sequence alignments. This is
+      a natural fit for antibodies, where indels are rare and typically purified out, but
+      it limits direct transfer to other protein families.
+    </p>
+  </div>
+
+  <!-- ── Reference ───────────────────────────────────── -->
+  <div class="section" id="reference">
+    <h2>Reference</h2>
+    <pre class="bibtex">@inproceedings{lu2026cosine,
+  title     = {Conditionally Site-Independent Neural Evolution of Antibody Sequences},
+  author    = {Lu, Stephen Zhewen and Vermani, Aakarsh and Sanno, Kohei and
+               Lu, Jiarui and Matsen IV, Frederick A. and
+               Jagota, Milind and Song, Yun S.},
+  booktitle = {Proceedings of the 43rd International Conference on Machine Learning},
+  year      = {2026},
+  note      = {ICML 2026}
+}</pre>
+  </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
