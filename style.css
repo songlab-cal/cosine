@@ -51,16 +51,6 @@ header h1 {
   font-size: 0.95rem;
 }
 
-.author-list a {
-  color: var(--text);
-  text-decoration: none;
-}
-
-.author-list a:hover {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
 .equal-contrib {
   font-size: 0.8rem;
   color: var(--text-muted);
@@ -342,8 +332,101 @@ th.group-start {
   color: var(--text);
 }
 
+/* ── In-text links (citations) ────────────────────────── */
+.section p a,
+.abstract-body a,
+.why-list li a,
+figcaption a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(29, 158, 117, 0.35);
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.section p a:hover,
+.abstract-body a:hover,
+.why-list li a:hover,
+figcaption a:hover {
+  border-bottom-color: var(--accent);
+  color: #157a5b;
+}
+
+/* ── Lightbox (click-to-expand for figures, chart, tables) ─── */
+.zoomable { cursor: zoom-in; }
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2.5rem;
+}
+
+.lightbox[hidden] { display: none; }
+
+.lightbox-content {
+  max-width: 92vw;
+  max-height: 90vh;
+  background: var(--bg);
+  border-radius: 6px;
+  padding: 1.25rem;
+  overflow: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.lightbox-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.lightbox-content .table-scroll {
+  margin: 0;
+}
+
+.lightbox-content .lightbox-chart {
+  width: min(85vw, 1200px);
+  height: min(70vh, 700px);
+  position: relative;
+}
+
+.lightbox-content .lightbox-chart canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+.lightbox-content table {
+  font-size: 0.95rem;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.lightbox-close:hover { background: rgba(255, 255, 255, 0.1); }
+
+body.lightbox-open { overflow: hidden; }
+
 /* ── Responsive ───────────────────────────────────────── */
 @media (max-width: 540px) {
   header h1 { font-size: 1.3rem; }
   .figures-row { flex-direction: column; }
+  .lightbox { padding: 1rem; }
+  .lightbox-content { padding: 0.75rem; }
 }

@@ -233,65 +233,61 @@ function buildCDRTable() {
 
 // ── Selection score chart ─────────────────────────────────────────────────────
 
-function buildSelectionChart() {
-  const canvas = document.getElementById('selectionChart');
-  if (!canvas) return;
+const SELECTION_GROUPS = [
+  { label: 'Expression', from: 0, to: 2, fill: 'rgba(15, 23, 42, 0.035)' },
+  { label: 'Binding',    from: 3, to: 6, fill: 'rgba(15, 23, 42, 0.07)'  },
+];
 
-  const groups = [
-    { label: 'Expression', from: 0, to: 2, fill: 'rgba(29, 158, 117, 0.05)' },
-    { label: 'Binding',    from: 3, to: 6, fill: 'rgba(29, 158, 117, 0.11)' },
-  ];
-
-  const groupBounds = (chart, g) => {
-    const x = chart.scales.x;
-    const halfStep = x.width / (SELECTION_ASSAYS.length * 2);
-    return {
-      x0: x.getPixelForValue(g.from) - halfStep,
-      x1: x.getPixelForValue(g.to)   + halfStep,
-    };
+const selectionGroupBounds = (chart, g) => {
+  const x = chart.scales.x;
+  const halfStep = x.width / (SELECTION_ASSAYS.length * 2);
+  return {
+    x0: x.getPixelForValue(g.from) - halfStep,
+    x1: x.getPixelForValue(g.to)   + halfStep,
   };
+};
 
-  const groupBandPlugin = {
-    id: 'groupBand',
-    // Shaded backdrop behind the bars, so it's clear which bars belong to which group.
-    beforeDatasetsDraw(chart) {
-      const { ctx, scales: { y } } = chart;
-      ctx.save();
-      groups.forEach(g => {
-        const { x0, x1 } = groupBounds(chart, g);
-        ctx.fillStyle = g.fill;
-        ctx.fillRect(x0, y.top, x1 - x0, y.bottom - y.top);
-      });
-      ctx.restore();
-    },
-    // Group label + thin underline above the chart area.
-    afterDraw(chart) {
-      const { ctx, scales: { y } } = chart;
-      const top = y.top;
-      const labelGap = 4;
-      ctx.save();
-      groups.forEach(g => {
-        const { x0, x1 } = groupBounds(chart, g);
-        ctx.strokeStyle = 'rgba(29, 158, 117, 0.45)';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(x0, top - 1);
-        ctx.lineTo(x1, top - 1);
-        ctx.stroke();
+const selectionGroupBandPlugin = {
+  id: 'groupBand',
+  beforeDatasetsDraw(chart) {
+    const { ctx, scales: { y } } = chart;
+    ctx.save();
+    SELECTION_GROUPS.forEach(g => {
+      const { x0, x1 } = selectionGroupBounds(chart, g);
+      ctx.fillStyle = g.fill;
+      ctx.fillRect(x0, y.top, x1 - x0, y.bottom - y.top);
+    });
+    ctx.restore();
+  },
+  afterDraw(chart) {
+    const { ctx, scales: { y } } = chart;
+    const top = y.top;
+    const labelGap = 4;
+    const fontPx = Math.min(14, Math.max(10, Math.round((chart.chartArea?.width || 600) / 60)));
+    ctx.save();
+    SELECTION_GROUPS.forEach(g => {
+      const { x0, x1 } = selectionGroupBounds(chart, g);
+      ctx.strokeStyle = 'rgba(15, 23, 42, 0.35)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x0, top - 1);
+      ctx.lineTo(x1, top - 1);
+      ctx.stroke();
 
-        ctx.fillStyle = '#6b7280';
-        ctx.font = '10px system-ui, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'bottom';
-        ctx.fillText(g.label, (x0 + x1) / 2, top - labelGap);
-      });
-      ctx.restore();
-    }
-  };
+      ctx.fillStyle = '#6b7280';
+      ctx.font = `${fontPx}px system-ui, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText(g.label, (x0 + x1) / 2, top - labelGap);
+    });
+    ctx.restore();
+  }
+};
 
-  new Chart(canvas, {
+function selectionChartConfig({ maintainAspectRatio = true, tickFontSize = 11, showLegend = false } = {}) {
+  return {
     type: 'bar',
-    plugins: [groupBandPlugin],
+    plugins: [selectionGroupBandPlugin],
     data: {
       labels: SELECTION_ASSAYS,
       datasets: [
@@ -313,23 +309,105 @@ function buildSelectionChart() {
     },
     options: {
       responsive: true,
-      layout: { padding: { top: 22 } },
+      maintainAspectRatio,
+      layout: { padding: { top: 28 } },
       scales: {
-        x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+        x: { grid: { display: false }, ticks: { font: { size: tickFontSize } } },
         y: {
           min: 0, max: 0.7,
-          title: { display: true, text: 'Spearman ρ', font: { size: 11 }, color: '#6b7280' },
+          title: { display: true, text: 'Spearman ρ', font: { size: tickFontSize }, color: '#6b7280' },
           grid: { color: 'rgba(0,0,0,0.06)' },
-          ticks: { font: { size: 11 } },
+          ticks: { font: { size: tickFontSize } },
         },
       },
       plugins: {
-        legend: { display: false },
+        legend: showLegend ? {
+          display: true,
+          position: 'bottom',
+          labels: {
+            boxWidth: 12,
+            boxHeight: 12,
+            padding: 16,
+            font: { size: 12 },
+            color: '#4b5563',
+          },
+        } : { display: false },
         tooltip: {
           callbacks: { label(ctx) { return `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)}`; } }
         }
       },
     }
+  };
+}
+
+function buildSelectionChart() {
+  const canvas = document.getElementById('selectionChart');
+  if (!canvas) return;
+  new Chart(canvas, selectionChartConfig());
+}
+
+// ── Lightbox ──────────────────────────────────────────────────────────────────
+
+function initLightbox() {
+  const lightbox = document.getElementById('lightbox');
+  if (!lightbox) return;
+  const content = lightbox.querySelector('.lightbox-content');
+  const closeBtn = lightbox.querySelector('.lightbox-close');
+
+  let activeChart = null;
+
+  const open = (node) => {
+    content.innerHTML = '';
+    content.appendChild(node);
+    lightbox.hidden = false;
+    document.body.classList.add('lightbox-open');
+  };
+
+  const close = () => {
+    lightbox.hidden = true;
+    document.body.classList.remove('lightbox-open');
+    if (activeChart) { activeChart.destroy(); activeChart = null; }
+    content.innerHTML = '';
+  };
+
+  // Figures: clone the <img>.
+  document.querySelectorAll('figure img').forEach(img => {
+    img.classList.add('zoomable');
+    img.addEventListener('click', () => open(img.cloneNode(true)));
+  });
+
+  // Chart.js canvas: build a fresh, interactive instance at lightbox size.
+  const canvas = document.getElementById('selectionChart');
+  if (canvas) {
+    canvas.classList.add('zoomable');
+    canvas.addEventListener('click', () => {
+      const wrap = document.createElement('div');
+      wrap.className = 'lightbox-chart';
+      const big = document.createElement('canvas');
+      wrap.appendChild(big);
+      open(wrap);
+      // After insertion so the wrapper has real dimensions.
+      activeChart = new Chart(big, selectionChartConfig({
+        maintainAspectRatio: false,
+        tickFontSize: 13,
+        showLegend: true,
+      }));
+    });
+  }
+
+  // Tables: clone the entire .table-scroll wrapper so styling carries.
+  document.querySelectorAll('.table-scroll').forEach(wrap => {
+    const table = wrap.querySelector('table');
+    if (!table) return;
+    table.classList.add('zoomable');
+    table.addEventListener('click', () => open(wrap.cloneNode(true)));
+  });
+
+  // Close interactions.
+  closeBtn.addEventListener('click', close);
+  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) close(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !lightbox.hidden) close();
   });
 }
 
@@ -339,4 +417,5 @@ document.addEventListener('DOMContentLoaded', () => {
   buildVEPTable();
   buildCDRTable();
   buildSelectionChart();
+  initLightbox();
 });

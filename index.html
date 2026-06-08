@@ -18,13 +18,13 @@
     <h1>Conditionally Site-Independent Neural Evolution of Antibody Sequences</h1>
 
     <div class="author-list">
-      <span><a href="#">Stephen Zhewen Lu</a><sup>*</sup></span>
-      <span><a href="#">Aakarsh Vermani</a><sup>*</sup></span>
-      <span><a href="#">Kohei Sanno</a></span>
-      <span><a href="#">Jiarui Lu</a></span>
-      <span><a href="#">Frederick A. Matsen IV</a></span>
-      <span><a href="#">Milind Jagota</a></span>
-      <span><a href="#">Yun S. Song</a></span>
+      <span>Stephen Zhewen Lu<sup>*</sup></span>
+      <span>Aakarsh Vermani<sup>*</sup></span>
+      <span>Kohei Sanno</span>
+      <span>Jiarui Lu</span>
+      <span>Frederick A. Matsen IV</span>
+      <span>Milind Jagota</span>
+      <span>Yun S. Song</span>
     </div>
 
     <p class="equal-contrib"><sup>*</sup> Equal contribution</p>
@@ -48,7 +48,7 @@
 
   <!-- ── One-line description ────────────────────────── -->
   <p class="description">
-    CoSiNE explicitly models the dynamics of affinity maturation, the evolutionary process that most antibody sequence models leave implicit.
+    CoSiNE explicitly models the dynamics of <i>affinity maturation</i>, the evolutionary process that most antibody sequence models leave implicit.
   </p>
 
   <!-- ── Teaser: antibody mutation timeline ──────────── -->
@@ -137,7 +137,7 @@
       A raw likelihood conflates two things: how likely a mutation is to occur under
       neutral somatic hypermutation (SHM), and how strongly that mutation is favored by
       selection. To isolate the selection signal, we take a log-ratio between CoSiNE and a
-      frozen pre-trained SHM model $q$ (Thrifty, Sung et al. 2025):
+      frozen pre-trained SHM model $q$ (<a href="https://elifesciences.org/reviewed-preprints/105471">Thrifty, Sung et al. 2025</a>):
     </p>
     <p class="equation">
       $$ \mathrm{Score}(x \to y) \;=\; \log p_\theta(y \mid x, t) \;-\; \log q(y \mid x, t) \;\approx\; \log P_{\text{fix}}(x \to y) \,+\, C. $$
@@ -176,17 +176,15 @@
     <p class="lead-in">
       <strong>Across nine assays, CoSiNE matches or beats the best baseline on eight.</strong>
       Spearman $\rho$ between model score and measured fitness, computed without ever
-      seeing experimental labels during training. Best per assay in <strong>bold</strong>,
-      second-best <u>underlined</u> (computed from the data, not hard-coded).
+      seeing experimental labels during training.
     </p>
 
     <div class="table-scroll">
       <table id="vepTable"></table>
     </div>
     <p class="figcap-stand">
-      The MAGMA-seq (Petersen) assays use a different experimental protocol and are held
-      out from the main benchmark, but the same eight baselines were run on all nine
-      columns. CoSiNE evaluated at $t = 0.2$. Shaneh.120 is an exact tie with DASM.
+      CoSiNE evaluated at $t = 0.2$. Best per assay in <strong>bold</strong>,
+      second-best <u>underlined</u>.
     </p>
   </div>
 
@@ -196,7 +194,7 @@
 
     <p>
       To design antibodies that bind a chosen antigen $z$, we want to draw from the
-      conditional density $p(y \mid x, t, z)$. Nisonoff et al. (2025) showed that in the
+      conditional density $p(y \mid x, t, z)$. <a href="https://openreview.net/forum?id=XsgHl54yO7">Nisonoff et al. (2025)</a> showed that in the
       $t \to 0$ limit this corresponds to tilting the rate matrix by the likelihood ratio:
     </p>
     <p class="equation">
@@ -252,7 +250,7 @@
       Among budget-constrained methods, CoSiNE attains the highest mean and maximum
       $\Delta$Bind while preserving humanness comparable to the antibody-specialized
       AbLang-PoE. Best per column in <strong>bold</strong>, second-best <u>underlined</u>.
-      Greedy* is excluded from the ranking. Arrows indicate direction of better.
+      Greedy* is excluded from the ranking.
     </p>
   </div>
 
@@ -286,6 +284,12 @@
   year      = {2026},
   note      = {ICML 2026}
 }</pre>
+  </div>
+
+  <!-- ── Lightbox overlay (populated by JS on click) ─── -->
+  <div id="lightbox" class="lightbox" hidden>
+    <button class="lightbox-close" aria-label="Close">&times;</button>
+    <div class="lightbox-content"></div>
   </div>
 
 </main>
