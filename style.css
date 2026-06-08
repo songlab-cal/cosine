@@ -1,0 +1,349 @@
+:root {
+  --max-w: 720px;
+  --accent: #1D9E75;
+  --text: #1a1a1a;
+  --text-muted: #6b7280;
+  --bg: #ffffff;
+  --bg-secondary: #f7f8f7;
+  --border: #e5e7eb;
+  --border-subtle: #d1d5db;
+  --font-size-base: 15px;
+  --font-size-caption: 12.5px;
+  --font-size-small: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: var(--font-size-base);
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.65;
+}
+
+main {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 1.25rem 4rem;
+}
+
+/* ── Header ───────────────────────────────────────────── */
+header {
+  text-align: center;
+  padding: 3.5rem 0 2rem;
+}
+
+header h1 {
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  margin-bottom: 1.4rem;
+}
+
+.author-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 1rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.95rem;
+}
+
+.author-list a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.author-list a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.equal-contrib {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.7rem;
+}
+
+.affiliation {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.4rem;
+}
+
+.link-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 5px 14px;
+  border: 0.5px solid var(--border-subtle);
+  border-radius: 999px;
+  background: var(--bg-secondary);
+  color: var(--text);
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: border-color 0.15s;
+}
+
+.pill:hover { border-color: var(--accent); }
+
+.pill svg { flex-shrink: 0; }
+
+/* ── Section ──────────────────────────────────────────── */
+.section {
+  margin: 3rem 0;
+}
+
+.section h2 {
+  font-size: 1.15rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.subsection-h {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+  margin: 1.75rem 0 0.6rem;
+  letter-spacing: -0.005em;
+}
+
+.section h2 + .subsection-h {
+  margin-top: 0.25rem;
+}
+
+/* ── One-line description ─────────────────────────────── */
+.description {
+  text-align: center;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  color: var(--text);
+  margin: 0;
+  padding: 0.25rem 0;
+}
+
+/* ── Teaser ───────────────────────────────────────────── */
+.teaser-wrap {
+  margin: 2rem 0 1rem;
+}
+
+.teaser-wrap figure {
+  margin: 0;
+}
+
+.teaser-wrap video {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 6px;
+}
+
+/* ── Figures ──────────────────────────────────────────── */
+figure {
+  margin: 1.25rem 0;
+  text-align: center;
+}
+
+figure img,
+figure object {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+figcaption {
+  font-size: var(--font-size-caption);
+  color: var(--text-muted);
+  margin-top: 0.55rem;
+  text-align: left;
+  line-height: 1.5;
+}
+
+figcaption strong {
+  color: var(--text);
+}
+
+.figures-row {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+
+.figures-row figure {
+  flex: 1;
+}
+
+/* ── Abstract ─────────────────────────────────────────── */
+#abstract h2 { text-align: center; }
+
+.abstract-body {
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* ── Lead-in paragraphs ───────────────────────────────── */
+.lead-in {
+  margin-bottom: 1rem;
+  line-height: 1.65;
+}
+
+/* ── Standalone figure caption (under a chart/table, not in a <figure>) ─── */
+.figcap-stand {
+  font-size: var(--font-size-caption);
+  color: var(--text-muted);
+  margin-top: 0.55rem;
+  line-height: 1.5;
+}
+
+/* ── KaTeX display equations ───────────────────────────── */
+.equation {
+  margin: 0.9rem 0 0.9rem;
+  text-align: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.katex-display {
+  margin: 0 !important;
+  font-size: 1em;
+}
+
+.katex { font-size: 1em; }
+
+/* ── "Why CoSiNE?" bullet list ─────────────────────────── */
+.why-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.why-list li {
+  padding: 0.6rem 0.95rem;
+  margin-bottom: 0.55rem;
+  background: var(--bg-secondary);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 4px 4px 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.why-list li:last-child { margin-bottom: 0; }
+
+/* ── CDR optimization table: reference (Greedy*) row ──── */
+tbody tr.reference-row {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+tbody tr.reference-row td:first-child {
+  font-style: italic;
+}
+
+/* ── Chart ────────────────────────────────────────────── */
+.chart-container {
+  max-width: 680px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.chart-legend {
+  display: flex;
+  gap: 1.25rem;
+  justify-content: center;
+  margin-bottom: 0.6rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.legend-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+/* ── Table ────────────────────────────────────────────── */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 1rem 0;
+}
+
+table {
+  border-collapse: collapse;
+  font-size: var(--font-size-small);
+  font-variant-numeric: tabular-nums;
+  width: 100%;
+  white-space: nowrap;
+}
+
+thead th {
+  font-weight: 500;
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+}
+
+thead th:first-child { text-align: left; }
+
+thead tr.group-header th {
+  text-align: center;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  padding-bottom: 2px;
+  border-bottom: none;
+}
+
+thead tr.group-header th:first-child { text-align: left; }
+
+tbody td {
+  padding: 4px 8px;
+  border-top: 0.5px solid var(--border);
+  text-align: right;
+}
+
+tbody td:first-child { text-align: left; }
+
+tbody tr.cosine-row {
+  background: var(--bg-secondary);
+  font-weight: 500;
+}
+
+td.group-start,
+th.group-start {
+  border-left: 1px solid var(--border-subtle);
+}
+
+/* ── BibTeX ───────────────────────────────────────────── */
+.bibtex {
+  background: var(--bg-secondary);
+  border: 0.5px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+  color: var(--text);
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 540px) {
+  header h1 { font-size: 1.3rem; }
+  .figures-row { flex-direction: column; }
+}
